@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+
+  synthea:
+    image: synthea
+    container_name: server
+    ports:
+      - "80:80"
+    environment:
+      DATABASE_URL: postgres://postgres@postgres/fhir
+    depends_on:
+      - mongodb
+      - db
+    volumes:
+      - opt:/opt
+      - syntheticmass-htdocs:/var/www/html
+      - .:/usr/src/service
+      - /tmp:/tmp
+      - /home/hossein:/home/hossein
+    working_dir: /usr/src/service
+
+  mongodb:
+    image: mongo
+    container_name: my-mongodb
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+
+  db:
+    image: mdillon/postgis
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
+    volumes:
+      - database_data:/var/lib/postgresql/data
+      - /tmp:/tmp
+      - /home/hossein:/home/hossein
+
+  adminer:
+    image: adminer
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - 8080:8080
+
+
+volumes:
+  database_data:
+      driver: local
+  syntheticmass-htdocs:
+  services:
+  opt:
+
+
+
+
