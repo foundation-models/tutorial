@@ -4,9 +4,9 @@ services:
 
   synthea:
     image: synthea
-    container_name: server
+    container_name: site
     ports:
-      - "80:80"
+      - 8080:8080
     environment:
       DATABASE_URL: postgres://postgres@postgres/fhir
     depends_on:
@@ -14,11 +14,12 @@ services:
       - db
     volumes:
       - opt:/opt
-      - syntheticmass-htdocs:/var/www/html
-      - .:/usr/src/service
+      - syntheticmass_htdocs:/var/www/html
+      - /home/hossein/dev/synthetichealth/syntheticmass/site:/usr/src/service
       - /tmp:/tmp
       - /home/hossein:/home/hossein
     working_dir: /usr/src/service
+    command: npm start
 
   mongodb:
     image: mongo
@@ -38,7 +39,7 @@ services:
     environment:
       POSTGRES_PASSWORD: 'postgres'
     volumes:
-      - database_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
       - /tmp:/tmp
       - /home/hossein:/home/hossein
 
@@ -48,15 +49,18 @@ services:
       - db
     restart: always
     ports:
-      - 8080:8080
+      - 8090:8080
 
 
 volumes:
-  database_data:
-      driver: local
-  syntheticmass-htdocs:
-  services:
+  postgres_data:
+    external: true
+  syntheticmass_htdocs:
+    external: true
   opt:
+    external: true
+
+
 
 
 
